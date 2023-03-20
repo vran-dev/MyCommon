@@ -1,19 +1,74 @@
 plugins {
     id 'java'
+    id 'java-library'
+    id 'maven-publish'
+    id 'checkstyle'
+    id 'jacoco'
+    id 'org.springframework.boot' version '2.7.9' apply false
+    id 'io.spring.dependency-management' version '1.0.15.RELEASE' apply false
 }
 
 group 'cc.cc1234'
-version '1.0-SNAPSHOT'
+version '1.0.0-SNAPSHOT'
 
-repositories {
-    mavenCentral()
+ext {
+    lombokVersion = "1.18.26"
+    junitVersion = "5.8.1"
+
+    // plugin version
+    checkstyleVersion = '8.45.1'
 }
 
-dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
-}
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'checkstyle'
+    apply plugin: 'jacoco'
 
-test {
-    useJUnitPlatform()
+    java {
+        withSourcesJar()
+        withJavadocJar()
+    }
+
+    version = '1.1.0-SNAPSHOT'
+    group = 'cc.cc1234.common'
+    sourceCompatibility = 1.8
+
+    dependencies {
+        implementation "org.projectlombok:lombok:${lombokVersion}"
+        annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+        testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+    }
+
+    test {
+        useJUnitPlatform()
+        finalizedBy jacocoTestReport
+    }
+
+    repositories {
+        mavenLocal()
+        maven {
+            url 'https://maven.aliyun.com/repository/public'
+        }
+        mavenCentral()
+    }
+
+    jacocoTestReport {
+        dependsOn test
+        reports {
+            xml.required = false
+            csv.required = false
+            html.outputLocation = layout.buildDirectory.dir('reports/jacoco/html')
+        }
+    }
+
+    checkstyle {
+        toolVersion = "${checkstyleVersion}"
+    }
+
+    javadoc {
+        options {
+            encoding "UTF-8"
+            charSet "UTF-8"
+        }
+    }
 }
