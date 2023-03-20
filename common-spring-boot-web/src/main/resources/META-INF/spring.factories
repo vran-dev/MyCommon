@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  cc.cc1234.common.spring.config.HttpLogFilterAutoConfiguration,\
+  cc.cc1234.common.spring.config.GlobalExceptionHandlerConfiguration
