@@ -1,0 +1,4 @@
+dependencies {
+    implementation 'jakarta.servlet:jakarta.servlet-api:4.0.4'
+    implementation 'commons-io:commons-io:2.11.0'
+}
