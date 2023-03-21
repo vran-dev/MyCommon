@@ -1,0 +1,5 @@
+dependencies {
+    implementation 'org.mybatis.generator:mybatis-generator-core:1.4.0'
+    testImplementation 'org.mybatis.generator:mybatis-generator-core:1.4.0'
+}
+

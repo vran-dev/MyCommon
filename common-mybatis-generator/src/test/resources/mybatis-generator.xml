@@ -1,0 +1,57 @@
+<!DOCTYPE generatorConfiguration PUBLIC
+        "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+    <context id="simple" targetRuntime="MyBatis3">
+        <!-- default configuration -->
+        <property name="autoDelimitKeywords" value="true"/>
+        <property name="beginningDelimiter" value="'"/>
+        <property name="endingDelimiter" value="'"/>
+        <property name="javaFileEncoding" value="UTF-8"/>
+
+        <plugin type="cc.cc1234.common.mybatis.generator.plugin.InjectJavaTypeToSqlMapPlugin"/>
+        <plugin type="cc.cc1234.common.mybatis.generator.plugin.ExampleModelPlusPlugin"/>
+        <plugin type="cc.cc1234.common.mybatis.generator.plugin.MapperPlusPlugin">
+            <property name="base-mapper.target.project" value="src/generated/java"/>
+            <property name="base-mapper.target.package" value="cc.cc1234.family.member.dao.mapper"/>
+            <property name="base-mapper.name" value="OneMapper"/>
+            <property name="java-mapper.target.project" value="src/generated/java"/>
+            <property name="java-mapper.target.package" value="cc.cc1234.dao.mapper"/>
+        </plugin>
+        <plugin type="cc.cc1234.common.mybatis.generator.plugin.NullSafePlugin">
+            <property name="ignore.columns"
+                      value="*.create_time,*.update_time,*.create_at"/>
+            <property name="optional.getter" value="true"/>
+            <property name="spring.nullable" value="true"/>
+        </plugin>
+        <!--  add @Data Annotation      -->
+        <plugin type="cc.cc1234.common.mybatis.generator.plugin.LombokPlugin"/>
+
+        <commentGenerator>
+            <property name="addRemarkComments" value="true"/>
+            <property name="suppressDate" value="true"/>
+        </commentGenerator>
+
+        <jdbcConnection driverClass="org.postgresql.Driver"
+                        connectionURL="jdbc:postgresql://localhost:5432/point_management" userId="postgres"
+                        password="123456"/>
+
+        <javaTypeResolver>
+            <property name="useJSR310Types" value="true"/>
+        </javaTypeResolver>
+
+        <!-- Java 代码生成配置 -->
+        <javaModelGenerator targetPackage="cc.cc1234.dao.model"
+                            targetProject="src/generated/java"/>
+
+        <sqlMapGenerator targetPackage="mapper"
+                         targetProject="src/generated/resources">
+        </sqlMapGenerator>
+
+        <!-- 自定义表配置 -->
+        <table tableName="%" schema="public" catalog="point_management">
+            <columnOverride column="id" javaType="java.lang.Integer"/>
+        </table>
+
+    </context>
+</generatorConfiguration>
