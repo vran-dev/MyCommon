@@ -1,6 +1,6 @@
 package cc.cc1234.common.spring.config;
 
-import cc.cc1234.common.spring.web.GlobalExceptionHandler;
+import cc.cc1234.common.spring.web.exception.GlobalExceptionHandler;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

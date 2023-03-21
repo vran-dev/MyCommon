@@ -1,4 +1,4 @@
-package cc.cc1234.common.spring.web;
+package cc.cc1234.common.spring.web.exception;
 
 import cc.cc1234.common.core.BusinessErrorResponse;
 import cc.cc1234.common.core.exception.BusinessException;
