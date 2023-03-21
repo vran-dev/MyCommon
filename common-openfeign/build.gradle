@@ -1,0 +1,4 @@
+dependencies {
+    implementation project(":common-core")
+    implementation "io.github.openfeign:feign-core:12.2"
+}

@@ -13,4 +13,3 @@ include 'common-core'
 include 'common-spring-boot-web'
 include 'common-openfeign'
 include 'common-servlet'
-
