@@ -2,32 +2,34 @@ package cc.cc1234.common.core.exception;
 
 public class BusinessException extends RuntimeException {
 
-    private BusinessError businessError;
+    private final String errorCode;
 
-    private String errorCode;
-
-    private String errorMessage;
+    private Object[] args = new Object[0];
 
     public BusinessException(BusinessError businessError) {
-        super(businessError.getErrorMessage());
-        this.businessError = businessError;
         this.errorCode = businessError.getErrorCode();
-        this.errorMessage = businessError.getErrorMessage();
     }
 
-    public BusinessException(BusinessError businessError, String overrideMessage) {
-        super(overrideMessage);
-        this.businessError = businessError;
+    public BusinessException(BusinessError businessError, Object[] args) {
         this.errorCode = businessError.getErrorCode();
-        this.errorMessage = overrideMessage;
+        this.args = args;
+    }
+
+    public BusinessException(String errorCode) {
+        this.errorCode = errorCode;
+    }
+
+    public BusinessException(String errorCode, Object[] args) {
+        this.errorCode = errorCode;
+        this.args = args;
     }
 
     public String getErrorCode() {
         return errorCode;
     }
 
-    public String getErrorMessage() {
-        return errorMessage;
+    public Object[] getArgs() {
+        return args;
     }
 
 }

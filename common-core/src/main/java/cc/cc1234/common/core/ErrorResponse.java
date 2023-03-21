@@ -1,19 +1,12 @@
 package cc.cc1234.common.core;
 
-import cc.cc1234.common.core.exception.BusinessException;
-
-public class BusinessErrorResponse {
+public class ErrorResponse {
 
     private String errorCode;
 
     private String errorMessage;
 
-    public BusinessErrorResponse(BusinessException exception) {
-        this.errorCode = exception.getErrorCode();
-        this.errorMessage = exception.getErrorMessage();
-    }
-
-    public BusinessErrorResponse(String errorCode, String errorMessage) {
+    public ErrorResponse(String errorCode, String errorMessage) {
         this.errorCode = errorCode;
         this.errorMessage = errorMessage;
     }

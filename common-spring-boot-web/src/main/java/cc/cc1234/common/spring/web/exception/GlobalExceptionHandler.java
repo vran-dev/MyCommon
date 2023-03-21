@@ -1,9 +1,11 @@
 package cc.cc1234.common.spring.web.exception;
 
-import cc.cc1234.common.core.BusinessErrorResponse;
+import cc.cc1234.common.core.ErrorResponse;
 import cc.cc1234.common.core.exception.BusinessException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.TypeMismatchException;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,11 +27,15 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 @RestControllerAdvice
 @Slf4j
+@RequiredArgsConstructor
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+
+    private final MessageSource messageSource;
 
     @ExceptionHandler({ConstraintViolationException.class})
     public ResponseEntity<Object> handleConstraintViolationException(
@@ -45,34 +51,34 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 path, errorMsg, item.getInvalidValue());
             break;
         }
-        return failInfo(errorMsg, HttpStatus.BAD_REQUEST, path);
+        return errorResponse(errorMsg, HttpStatus.BAD_REQUEST, path);
     }
 
     @ExceptionHandler({IllegalArgumentException.class})
     protected ResponseEntity<Object> handleIllegalArgument(IllegalArgumentException ex, WebRequest request) {
         String path = getPath(request);
         log.warn("IllegalArgumentException, request: {}, exception: {}", path, ex.getMessage());
-        return failInfo(ex.getMessage(), HttpStatus.BAD_REQUEST, path);
+        return errorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST, path);
     }
 
     @ExceptionHandler({BusinessException.class})
-    public ResponseEntity<Object> handleBusinessException(
-        BusinessException businessException, WebRequest request) {
+    public ResponseEntity<Object> handleBusinessException(BusinessException businessException,
+                                                          WebRequest request,
+                                                          Locale locale) {
         String path = getPath(request);
-        log.warn("BusinessException, request: {}, exception: {}", path, businessException.getMessage());
+        String errorCode = businessException.getErrorCode();
+        String message = messageSource.getMessage(errorCode, businessException.getArgs(), locale);
+        log.warn("BusinessException, request: {}, exception: {}", path, message);
         // 自定义 499 业务异常
-        return ResponseEntity
-            .status(499)
-            .body(new BusinessErrorResponse(businessException));
+        return ResponseEntity.status(499).body(new ErrorResponse(errorCode, message));
     }
 
     @ExceptionHandler({Exception.class})
     public ResponseEntity<Object> handleUnspecificException(Exception ex, WebRequest request) {
-
         String path = getPath(request);
         String errorMsg = ex.getMessage();
         log.error("Unspecific exception, request: " + path + ", exception: " + errorMsg + ":", ex);
-        return failInfo(errorMsg, HttpStatus.INTERNAL_SERVER_ERROR, path);
+        return errorResponse(errorMsg, HttpStatus.INTERNAL_SERVER_ERROR, path);
     }
 
     @Override
@@ -160,14 +166,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return resultBuilder.toString();
     }
 
-    private ResponseEntity<Object> failInfo(String errorMsg, HttpStatus status, String path) {
-        BusinessErrorResponse body = new BusinessErrorResponse(status.getReasonPhrase(), errorMsg);
+    private ResponseEntity<Object> errorResponse(String errorMsg, HttpStatus status, String path) {
+        ErrorResponse body = new ErrorResponse(status.getReasonPhrase(), errorMsg);
         return ResponseEntity.status(status).body(body);
     }
 
     private ResponseEntity<Object> handleOverriddenException(
         Exception ex, HttpHeaders headers, HttpStatus status, WebRequest request, String errorMsg) {
-        BusinessErrorResponse body = new BusinessErrorResponse(status.getReasonPhrase(), errorMsg);
+        ErrorResponse body = new ErrorResponse(status.getReasonPhrase(), errorMsg);
         return handleExceptionInternal(ex, body, headers, status, request);
     }
 
